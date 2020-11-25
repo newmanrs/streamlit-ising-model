@@ -9,17 +9,19 @@ class IsingState():
     xr = None #precomputing part of meshgrid for plot output
     yr = None
     beta = 1
+    sweeps = 0
 
     rng = np.random.default_rng()
 
     def __init__(self, Nx, Ny):
-        self.reinitialize(Nx,Ny);
+        self.reinitialize(Nx,Ny)
 
     @classmethod
     def reinitialize(cls,Nx,Ny):
         cls.Nx = Nx
         cls.Ny = Ny
-        cls.ist = 2*cls.rng.integers(0,2,size=(Nx,Ny))-1;
+        cls.ist = 2*cls.rng.integers(0,2,size=(Nx,Ny))-1
+        cls.sweeps = 0
         x,y = np.meshgrid(range(0,Nx),range(0,Ny))
         cls.xr = x.ravel()  #x column for plot df
         cls.yr = y.ravel()  #y ''
@@ -46,7 +48,7 @@ class IsingState():
         col = cls.rng.integers(0,cls.Ny)
         neighbors = [[row-1, col], [row+1,col],[row,col-1],[row,col+1]]
         #periodic bcs
-        neigh_spins = 0; #Sum spins of neighbors
+        neigh_spins = 0 #Sum spins of neighbors
         for t in neighbors:
             if t[0] < 0:
                 t[0] += cls.Nx
@@ -55,8 +57,8 @@ class IsingState():
             if t[1] < 0:
                 t[1] += cls.Ny
             elif t[1] == cls.Ny:
-                t[1] -= cls.Ny;
-            neigh_spins += cls.ist[t[0],t[1]];
+                t[1] -= cls.Ny
+            neigh_spins += cls.ist[t[0],t[1]]
         spin = cls.ist[row,col]
         curr_e = -spin*neigh_spins
         trial_e = spin*neigh_spins
@@ -65,7 +67,7 @@ class IsingState():
         #print("beta {}".format(cls.beta))
 
         #Optimize this?
-        if cls.rng.random() < np.exp(-cls.beta*(trial_e - curr_e)):
+        if cls.rng.random() < np.exp(cls.beta*(curr_e - trial_e)):
             cls.ist[row,col]*=-1
 
     @classmethod
@@ -73,4 +75,4 @@ class IsingState():
         for _ in range(0, cls.Nx * cls.Ny):
             cls.monte_carlo_move()
 
-Ising = IsingState(10,10);
+Ising = IsingState(10,10)
