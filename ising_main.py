@@ -10,16 +10,15 @@ def make_chart(rect_size=5):
     Create Altair plot from pd dataframe
     """
     source = Ising.get_plot_data()
-    #chart = alt.Chart(source).mark_rect().encode(
     chart = alt.Chart(source).mark_rect().encode(
         x='x:O',
         y='y:O',
         color='spin:Q',
-        #tooltip=['x','y','spin']
+        tooltip=['x','y','spin']
     ).properties(
         height = {'step':rect_size},
         width  = {'step':rect_size}
-    )
+    ).configure_scale(bandPaddingInner=0.1)
     return chart
 
 def render_streamlit():
@@ -49,8 +48,6 @@ def render_streamlit():
     chart_rect_width = 500 // np.max([Nx,Ny])
 
     while True:
-        #reset = resetholder.sidebar.button("Reset")
-        #print("Value of reset is {}".format(reset))
         if Nx != Ising.Nx or Ny != Ising.Ny:
             Ising.reinitialize(Nx,Ny); #Reset data
         Ising.set_beta(1.0/T)
@@ -61,6 +58,7 @@ def render_streamlit():
             chart = make_chart(chart_rect_width)
             st.altair_chart(chart,use_container_width=True)
             st.text("Currently on MC sweep {}".format(Ising.sweeps))
+            st.text("Temperature is {}".format(1/Ising.beta))
         if sleep_timer > 0:
             time.sleep(sleep_timer)
 

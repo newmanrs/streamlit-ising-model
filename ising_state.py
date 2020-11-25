@@ -26,8 +26,6 @@ class IsingState():
 
         #set up x,y for df needed to plot
         x,y = np.meshgrid(range(0,Nx),range(0,Ny))
-        #cls.xr = x.ravel()  #x column for plot df
-        #cls.yr = y.ravel()  #y ''
         cls.df = pd.DataFrame(
             {'x' : x.ravel(),
              'y' : y.ravel(),
@@ -78,6 +76,8 @@ class IsingState():
         col = cls.rng.integers(0,cls.Ny)
         neighbors = cls.neighborlist[row][col]
         neigh_spins = 0 #Sum spins of neighbors
+
+        #This could probably be optimized
         for t in neighbors:
             neigh_spins += cls.ist[t[0],t[1]]
         spin = cls.ist[row,col]
