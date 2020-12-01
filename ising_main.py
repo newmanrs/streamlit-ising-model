@@ -31,12 +31,11 @@ def render_streamlit():
     $H=-\sum_{i,j}\sigma_{i}\sigma_{j}$
 
     where $\sigma_{i}$ is the spin of site $i$, and this summation is carried out over adjacent neighbors $j$.
-    ''');
+    ''')
 
     #st.latex(r'''
     #H = - \sum_{i,j} \sigma_{i} \sigma_{j}
     #''')
-
 
     chartholder = st.empty()
     Nx = st.sidebar.number_input("Nx (Sites on X axis)", min_value = 3,value=25,max_value = 100)
@@ -46,6 +45,10 @@ def render_streamlit():
     sleep_timer = st.sidebar.number_input("Sleep time between loops", min_value = 0.0, value = 0.0, max_value = 30.0)
 
     chart_rect_width = 500 // np.max([Nx,Ny])
+
+    st.write(r'''
+    Each Monte Carlo sweep is Nx*Ny random moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point is near the default temperature of 2.27.
+    ''')
 
     while True:
         if Nx != Ising.Nx or Ny != Ising.Ny:
