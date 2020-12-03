@@ -15,7 +15,6 @@ class IsingState():
     accepted_count = None
     rejected_count = None
 
-
     rng = np.random.default_rng()
 
 
@@ -93,13 +92,13 @@ class IsingState():
         for t in neighbors:
             neigh_spins += cls.ist[t[0],t[1]]
         spin = cls.ist[row,col]
-        curr_e = -spin*neigh_spins
-        trial_e = spin*neigh_spins
 
-        t = np.exp(cls.beta*(curr_e-trial_e))
-        #print("curr e, trial e, threshold = {}, {}, {}".format(curr_e,trial_e,t))
+        trial_delta_e = 2*spin*neigh_spins
 
-        if cls.rng.random() < np.exp(cls.beta*(curr_e - trial_e)):
+        if trial_delta_e <= 0:
+            cls.accepted_count+=1
+            cls.ist[row,col]=-spin
+        elif cls.rng.random() < np.exp(-cls.beta*trial_delta_e):
             cls.accepted_count+=1
             cls.ist[row,col]=-spin
         else:
