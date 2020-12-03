@@ -1,7 +1,14 @@
 # streamlit-ising-model
 
-Testing using streamlit to run a program that has a continuous state loop.  Might be usable as a teaching model, but the ising model update step ought to be moved into C++ with pybind11 for performance reasons (or at least a more clever numpy solution than naive loops/indexing of arrays).  It does work, however running multiple browser tabs may cause the state to conflict and crash.
+Basic 2D Ising model simulation with no external field, with some basic controls for system size and temperature.  Frontend provided via streamlit, running the Ising model in a continuous loop.  Maybe someone will find this useful as a teaching model letting students play with system size and temperature to observe the Ising phase transition.
 
-TODO: Maybe add external field term to the model, and compute magnetism to better illustrate the phase transition.
+## Installation
+Assuming a working python3 install, after cloning and entering the project directory:
+```
+pip3 install -r requirements.txt
+./run.sh
+```
+For more details, consult the documentation for [streamlit](https://docs.streamlit.io/en/stable/).
 
-TODO: Run script maybe ought to configure a venv in the local directory instead of failing.  Maybe make a docker script so this is more portable - streamlit's installer seems a bit quirky.
+## Limitations 
+Local streamlit server should only be accessed in one tab (user) due to the simulation state being stored in the Ising module.  Resizing Nx/Ny in several tabs is likely to cause a crash. Fixing this to be a multi-user streamlit app will need the Ising model refactored into a streamlit SessionState to have per-user sessions.
