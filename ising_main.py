@@ -40,11 +40,13 @@ def render_streamlit():
     chartholder = st.empty()
     Nx = st.sidebar.number_input("Nx (Sites on X axis)", min_value = 3,value=25,max_value = 100)
     Ny = st.sidebar.number_input("Ny (Sites on Y axis)", min_value = 3,value=25,max_value = 100)
-    T =  st.sidebar.number_input("T (Temperature)", min_value = 0.0001, value = 2.2692, max_value = 100.0)
+    T =  st.sidebar.number_input("T (Temperature)", min_value = 0.0001, value = 2.2692, max_value = 100.0,format="%.4f")
     sweeps_per_frame = st.sidebar.number_input("Sweeps per frame", min_value = 1, value = 100, max_value=10000)
     sleep_timer = st.sidebar.number_input("Sleep time between loops", min_value = 0.0, value = 0.0, max_value = 30.0)
 
-    chart_rect_width = 500 // np.max([Nx,Ny])
+    chart_rect_width = 500 // np.max([Nx,Ny])  #Heuristic for making plot look reasonable
+    if chart_rect_width == 0:
+        chart_rect_width = 1  #min width 1 px
 
     st.write(r'''
     Each Monte Carlo sweep is Nx*Ny random moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point is near the default temperature of 2.27.
@@ -60,9 +62,10 @@ def render_streamlit():
         with chartholder.beta_container():
             chart = make_chart(chart_rect_width)
             st.altair_chart(chart,use_container_width=True)
-            st.text("Currently on MC sweep {}".format(Ising.sweeps))
-            st.text("Temperature is {}".format(1/Ising.beta))
-            st.text("MC acceptance rate {}".format(Ising.accepted_count / (Ising.accepted_count + Ising.rejected_count)))
+            st.text("Currently on MC sweep {}, proceeding at {} sweeps per second.".format(Ising.sweeps, Ising.sweeps_per_second))
+            st.text("Mean energy is {:.5f}.".format(Ising.df['energy'].sum() / (Ising.Nx * Ising.Ny)))
+            st.text("Mean spin is {:.3f}.".format(Ising.df['spin'].sum() / (Ising.Nx * Ising.Ny)))
+            st.text("MC acceptance rate {}.".format(Ising.accepted_count / (Ising.accepted_count + Ising.rejected_count)))
         if sleep_timer > 0:
             time.sleep(sleep_timer)
 

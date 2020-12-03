@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.random import default_rng
 import pandas as pd
+import time
 
 class IsingState():
     Nx = 10
@@ -28,6 +29,7 @@ class IsingState():
         cls.ist = 2*cls.rng.integers(0,2,size=(Nx,Ny))-1
         cls.iste = np.zeros(shape=(Nx,Ny),dtype=np.float64)
         cls.sweeps = 0
+        cls.sweeps_per_second = 0
         cls.accepted_count = 0
         cls.rejected_count = 0
 
@@ -118,9 +120,11 @@ class IsingState():
     def monte_carlo_sweep(cls,sweeps=1):
         cls.accepted_count = 0
         cls.rejected_count = 0
+        tstart = time.time()
         for _ in range(0, cls.Nx * cls.Ny * sweeps):
             cls.monte_carlo_move()
         cls.sweeps+=sweeps
         cls.compute_energy()
+        cls.sweeps_per_second = sweeps / (time.time() - tstart)
 
 Ising = IsingState(3,3)
