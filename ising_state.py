@@ -11,6 +11,9 @@ class IsingState():
     beta = 1
     sweeps = 0
     neighborlist = None  #precompute neighbors
+    accepted_count = None
+    rejected_count = None
+
 
     rng = np.random.default_rng()
 
@@ -25,6 +28,8 @@ class IsingState():
         cls.ist = 2*cls.rng.integers(0,2,size=(Nx,Ny))-1
         cls.iste = np.zeros(shape=(Nx,Ny),dtype=np.float64)
         cls.sweeps = 0
+        cls.accepted_count = 0
+        cls.rejected_count = 0
 
         #set up x,y for df needed to plot
         x,y = np.meshgrid(range(0,Nx),range(0,Ny))
@@ -89,8 +94,14 @@ class IsingState():
         curr_e = -spin*neigh_spins
         trial_e = spin*neigh_spins
 
+        t = np.exp(cls.beta*(curr_e-trial_e))
+        #print("curr e, trial e, threshold = {}, {}, {}".format(curr_e,trial_e,t))
+
         if cls.rng.random() < np.exp(cls.beta*(curr_e - trial_e)):
-            cls.ist[row,col]*=-1
+            cls.accepted_count+=1
+            cls.ist[row,col]=-spin
+        else:
+            cls.rejected_count+=1
 
     @classmethod
     def compute_energy(cls):
@@ -105,6 +116,8 @@ class IsingState():
 
     @classmethod
     def monte_carlo_sweep(cls,sweeps=1):
+        cls.accepted_count = 0
+        cls.rejected_count = 0
         for _ in range(0, cls.Nx * cls.Ny * sweeps):
             cls.monte_carlo_move()
         cls.sweeps+=sweeps

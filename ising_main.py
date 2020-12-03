@@ -62,6 +62,7 @@ def render_streamlit():
             st.altair_chart(chart,use_container_width=True)
             st.text("Currently on MC sweep {}".format(Ising.sweeps))
             st.text("Temperature is {}".format(1/Ising.beta))
+            st.text("MC acceptance rate {}".format(Ising.accepted_count / (Ising.accepted_count + Ising.rejected_count)))
         if sleep_timer > 0:
             time.sleep(sleep_timer)
 
