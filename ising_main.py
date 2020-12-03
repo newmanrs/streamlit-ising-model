@@ -14,7 +14,7 @@ def make_chart(rect_size=5):
         x='x:O',
         y='y:O',
         color='spin:Q',
-        tooltip=['x','y','spin']
+        tooltip=['x','y','spin','energy']
     ).properties(
         height = {'step':rect_size},
         width  = {'step':rect_size}

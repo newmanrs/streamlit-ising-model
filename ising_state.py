@@ -6,6 +6,7 @@ class IsingState():
     Nx = 10
     Ny = 10
     ist = None  #Ising board state
+    iste = None #Ising board energy
     df = None  #dataframe used to plot in altair
     beta = 1
     sweeps = 0
@@ -22,6 +23,7 @@ class IsingState():
         cls.Nx = Nx
         cls.Ny = Ny
         cls.ist = 2*cls.rng.integers(0,2,size=(Nx,Ny))-1
+        cls.iste = np.zeros(shape=(Nx,Ny),dtype=np.float64)
         cls.sweeps = 0
 
         #set up x,y for df needed to plot
@@ -29,10 +31,12 @@ class IsingState():
         cls.df = pd.DataFrame(
             {'x' : x.ravel(),
              'y' : y.ravel(),
-             'spin' : cls.ist.ravel()
+             'spin' : cls.ist.ravel(),
+             'energy' : cls.iste.ravel()
             })
 
         cls.precompute_neighborlist()
+        cls.compute_energy()
 
     @classmethod 
     def precompute_neighborlist(cls):
@@ -63,6 +67,7 @@ class IsingState():
         Updates df with ising data to put into Altair plot
         """
         cls.df['spin'] = cls.ist.ravel()
+        cls.df['energy'] = cls.iste.ravel()
         return cls.df
 
     @classmethod
@@ -88,9 +93,21 @@ class IsingState():
             cls.ist[row,col]*=-1
 
     @classmethod
+    def compute_energy(cls):
+        for row in range(cls.Nx):
+            for col in range(cls.Ny):
+                neighbors = cls.neighborlist[row][col]
+                neigh_spins = 0 #Sum spins of neighbors
+                for t in neighbors:
+                    neigh_spins += cls.ist[t[0],t[1]]
+                spin = cls.ist[row,col]
+                cls.iste[row][col] = -spin*neigh_spins
+
+    @classmethod
     def monte_carlo_sweep(cls,sweeps=1):
         for _ in range(0, cls.Nx * cls.Ny * sweeps):
             cls.monte_carlo_move()
         cls.sweeps+=sweeps
+        cls.compute_energy()
 
 Ising = IsingState(3,3)
