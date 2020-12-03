@@ -10,6 +10,7 @@ class IsingState():
     iste = None #Ising board energy
     df = None  #dataframe used to plot in altair
     beta = 1
+    exp_beta_e = dict()
     sweeps = 0
     neighborlist = None  #precompute neighbors
     accepted_count = None
@@ -79,6 +80,10 @@ class IsingState():
     @classmethod
     def set_beta(cls,beta):
         cls.beta = beta
+        d = dict()
+        for i in [4,8]:
+            d[i] = np.exp(-beta*i)
+        cls.exp_beta_e = d
 
     @classmethod
     def monte_carlo_move(cls):
@@ -98,7 +103,8 @@ class IsingState():
         if trial_delta_e <= 0:
             cls.accepted_count+=1
             cls.ist[row,col]=-spin
-        elif cls.rng.random() < np.exp(-cls.beta*trial_delta_e):
+        #elif cls.rng.random() < np.exp(-cls.beta*trial_delta_e):
+        elif cls.rng.random() < cls.exp_beta_e[trial_delta_e]:
             cls.accepted_count+=1
             cls.ist[row,col]=-spin
         else:
