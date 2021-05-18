@@ -52,14 +52,14 @@ def render_streamlit():
     Ny = st.sidebar.number_input("Ny (Sites on Y axis)", min_value = 3,value=50,max_value = 400)
     T =  st.sidebar.number_input("T (Temperature)", min_value = 0.0001, value = 2.2692, max_value = 100.0,format="%.4f")
     sweeps_per_frame = st.sidebar.number_input("Sweeps per frame", min_value = 1, value = 25, max_value=10000)
-    sleep_timer = st.sidebar.number_input("Sleep time between loops", min_value = 0.0, value = 0.0, max_value = 60.0)
+    sleep_timer = st.sidebar.number_input("Additional sleep time between MC sweeps", min_value = 0.0, value = 0.0, max_value = 60.0)
 
     chart_rect_width = 500 // np.max([Nx,Ny])  #Heuristic for making plot look reasonable
     if chart_rect_width == 0:
         chart_rect_width = 1  #min width 1 px
 
     st.write(r'''
-    Each Monte Carlo sweep is $N_x$$N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
+    Each Monte Carlo (MC) sweep is $N_x$$N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
     ''')
 
     while True:
