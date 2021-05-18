@@ -59,7 +59,7 @@ def render_streamlit():
         chart_rect_width = 1  #min width 1 px
 
     st.write(r'''
-    Each Monte Carlo sweep is $N_x$$N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point is near the default temperature of 2.27.
+    Each Monte Carlo sweep is $N_x$$N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
     ''')
 
     while True:
