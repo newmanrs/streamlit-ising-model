@@ -26,8 +26,8 @@ class IsingState():
     def reinitialize(self, Nx, Ny):
         self.Nx = Nx
         self.Ny = Ny
-        self.ist = 2*self.rng.integers(0,2,size=(Nx,Ny))-1
-        self.iste = np.zeros(shape=(Nx,Ny),dtype=np.float64)
+        self.spins = 2*self.rng.integers(0,2,size=(Nx,Ny))-1
+        self.energies = np.zeros(shape=(Nx,Ny),dtype=np.float64)
         self.sweeps = 0
         self.sweeps_per_second = 0
         self.accepted_count = 0
@@ -38,8 +38,8 @@ class IsingState():
         self.df = pd.DataFrame(
             {'i' : i.ravel(),
              'j' : j.ravel(),
-             'spin' : self.ist.ravel(),
-             'energy' : self.iste.ravel()
+             'spin' : self.spins.ravel(),
+             'energy' : self.energies.ravel()
             })
 
         self.precompute_neighborlist()
@@ -71,8 +71,8 @@ class IsingState():
         """
         Updates df with ising data to put into Altair plot
         """
-        self.df['spin'] = self.ist.ravel()
-        self.df['energy'] = self.iste.ravel()
+        self.df['spin'] = self.spins.ravel()
+        self.df['energy'] = self.energies.ravel()
         return self.df
 
     def set_beta(self,beta):
@@ -92,17 +92,17 @@ class IsingState():
 
         #consider manual unrolling
         for t in neighbors:
-            neigh_spins += self.ist[t[0],t[1]]
-        spin = self.ist[row,col]
+            neigh_spins += self.spins[t[0],t[1]]
+        spin = self.spins[row,col]
 
         trial_delta_e = 2*spin*neigh_spins
 
         if trial_delta_e <= 0:
             self.accepted_count+=1
-            self.ist[row,col]=-spin
+            self.spins[row,col]=-spin
         elif self.rng.random() < self.exp_beta_e[trial_delta_e]:
             self.accepted_count+=1
-            self.ist[row,col]=-spin
+            self.spins[row,col]=-spin
         else:
             self.rejected_count+=1
 
@@ -112,9 +112,9 @@ class IsingState():
                 neighbors = self.neighborlist[row][col]
                 neigh_spins = 0 #Sum spins of neighbors
                 for t in neighbors:
-                    neigh_spins += self.ist[t[0],t[1]]
-                spin = self.ist[row,col]
-                self.iste[row][col] = -spin*neigh_spins
+                    neigh_spins += self.spins[t[0],t[1]]
+                spin = self.spins[row,col]
+                self.energies[row][col] = -spin*neigh_spins
 
     def monte_carlo_sweep(self,sweeps=1):
         self.accepted_count = 0
