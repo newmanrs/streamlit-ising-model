@@ -3,16 +3,17 @@ from numpy.random import default_rng
 import pandas as pd
 import time
 
+
 class IsingState():
     Nx = 10
     Ny = 10
-    ist = None  #Ising board state
-    iste = None #Ising board energy
-    df = None  #dataframe used to plot in altair
+    ist = None  # Ising board state
+    iste = None # Ising board energy
+    df = None   # dataframe used to plot in altair
     beta = 1
-    exp_beta_e = dict()
+    exp_beta_e = dict()  # lookup table
     sweeps = 0
-    neighborlist = None  #precompute neighbors
+    neighborlist = None  # precompute neighbors
     accepted_count = None
     rejected_count = None
 
@@ -22,7 +23,7 @@ class IsingState():
     def __init__(self, Nx, Ny):
         self.reinitialize(Nx,Ny)
 
-    def reinitialize(self,Nx,Ny):
+    def reinitialize(self, Nx, Ny):
         self.Nx = Nx
         self.Ny = Ny
         self.ist = 2*self.rng.integers(0,2,size=(Nx,Ny))-1
@@ -32,11 +33,11 @@ class IsingState():
         self.accepted_count = 0
         self.rejected_count = 0
 
-        #set up x,y for df needed to plot
-        x,y = np.meshgrid(range(0,Nx),range(0,Ny))
+        # altair plot input needs pd dataframe
+        i,j = np.meshgrid(range(0,Nx),range(0,Ny))
         self.df = pd.DataFrame(
-            {'x' : x.ravel(),
-             'y' : y.ravel(),
+            {'i' : i.ravel(),
+             'j' : j.ravel(),
              'spin' : self.ist.ravel(),
              'energy' : self.iste.ravel()
             })
@@ -99,7 +100,6 @@ class IsingState():
         if trial_delta_e <= 0:
             self.accepted_count+=1
             self.ist[row,col]=-spin
-        #elif self.rng.random() < np.exp(-self.beta*trial_delta_e):
         elif self.rng.random() < self.exp_beta_e[trial_delta_e]:
             self.accepted_count+=1
             self.ist[row,col]=-spin
@@ -125,5 +125,6 @@ class IsingState():
         self.sweeps+=sweeps
         self.compute_energy()
         self.sweeps_per_second = sweeps / (time.time() - tstart)
+
 
 Ising = IsingState(3,3)
