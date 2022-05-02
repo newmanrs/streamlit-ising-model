@@ -59,13 +59,13 @@ def render_streamlit():
     Nx = st.sidebar.number_input(
         "Nx (Sites on X axis)",
         min_value=3,
-        value=25,
+        value=20,
         max_value=400)
 
     Ny = st.sidebar.number_input(
         "Ny (Sites on Y axis)",
         min_value=3,
-        value=25,
+        value=20,
         max_value=400)
 
     T = st.sidebar.number_input(
@@ -86,6 +86,10 @@ def render_streamlit():
         min_value=0.0,
         value=0.0,
         max_value=60.0)
+
+    st.write(r'''
+        Each Monte Carlo (MC) sweep is $N_x N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
+    ''') # noqa : E501
 
     # Heuristic for making plot look reasonable
     chart_rect_width = 500 // np.max([Nx, Ny])
@@ -117,6 +121,7 @@ def render_streamlit():
             chart = make_chart(chart_rect_width)
             st.altair_chart(chart, use_container_width=True)
 
+            # Text here is bound to the chart object
             st.write(
                 f"Currently on MC sweep {Ising.sweeps}, "
                 f"proceeding at {Ising.sweeps_per_second:0.1f} "
@@ -136,10 +141,6 @@ def render_streamlit():
 
         if sleep_timer > 0:
             time.sleep(sleep_timer)
-
-        st.write(r'''
-        Each Monte Carlo (MC) sweep is $N_x N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
-        ''') # noqa : E501
 
 
 if __name__ == '__main__':
