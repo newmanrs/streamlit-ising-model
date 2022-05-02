@@ -3,10 +3,10 @@ import pandas as pd
 import time
 
 
-class IsingState():
+class IsingSimulation():
 
-    Nx = 10
-    Ny = 10
+    Nx = None
+    Ny = None
     spins = None     # Ising board state
     energies = None  # Ising board energy
     df = None        # dataframe used to plot in altair
@@ -142,6 +142,3 @@ class IsingState():
         self.sweeps += sweeps
         self.compute_energy()
         self.sweeps_per_second = sweeps / (time.time() - tstart)
-
-
-Ising = IsingState(3, 3)

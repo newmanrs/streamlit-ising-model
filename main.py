@@ -2,13 +2,15 @@ import altair as alt
 import numpy as np
 import streamlit as st
 import time
-from ising_state import Ising
+from isingsimulation import IsingSimulation
 
 
 def make_chart(rect_size=5):
     """
     Build altair heatmap to show simulation
     """
+
+    Ising = st.session_state.Ising
 
     source = Ising.get_plot_data()
 
@@ -44,14 +46,16 @@ def render_streamlit():
         Basic 2D Ising model Monte Carlo simulator on the square lattice with four adjacent neighbors and periodic boundary conditions.  The Hamiltonian $H$ is then given then by
 
 
-        $\displaystyle H=-\sum_{i=0}^{N_x N_y} \sum_{j=0}^{4} \sigma_{i}\sigma_{j}$
+        $\displaystyle \quad\quad H=-\sum_{i=0}^{N_x N_y} \sum_{j=0}^{4} \sigma_{i}\sigma_{j}$
 
         where $\sigma_{i}$ is the spin of site $i$, and this summation is carried out over four adjacent neighbors $j$.
-        '''
+        ''' # noqa : E501
         )
 
     chartholder = st.empty()
 
+    # Streamlit sidebar vars can be updated at any time by user
+    #  I probably ought to prefix these variables with something like input_Nx.
     Nx = st.sidebar.number_input(
         "Nx (Sites on X axis)",
         min_value=3,
@@ -88,10 +92,17 @@ def render_streamlit():
     if chart_rect_width == 0:
         chart_rect_width = 1  # min width 1 px
 
+    # Initialize Simulation
+    if 'Ising' not in st.session_state:
+        st.session_state['Ising'] = IsingSimulation(Nx, Ny)
 
+    Ising = st.session_state.Ising
+
+    # Run simulation loop while periodically updating the chart and
+    # some description statistics.
     while True:
 
-        # Reinitialize upon changing simulation size
+        # Reinitialize upon changing simulation size sliders
         if Nx != Ising.Nx or Ny != Ising.Ny:
             Ising.reinitialize(Nx, Ny)
 
@@ -108,7 +119,7 @@ def render_streamlit():
 
             st.write(
                 f"Currently on MC sweep {Ising.sweeps}, "
-                    f"proceeding at {Ising.sweeps_per_second:0.1f} "
+                f"proceeding at {Ising.sweeps_per_second:0.1f} "
                 f"sweeps per second."
                 )
             mean_energy = Ising.df['energy'].sum() \
@@ -126,9 +137,9 @@ def render_streamlit():
         if sleep_timer > 0:
             time.sleep(sleep_timer)
 
-    st.write(r'''
-    Each Monte Carlo (MC) sweep is $N_x N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
-    ''')
+        st.write(r'''
+        Each Monte Carlo (MC) sweep is $N_x N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
+        ''') # noqa : E501
 
 
 if __name__ == '__main__':
