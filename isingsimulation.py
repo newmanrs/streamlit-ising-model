@@ -52,6 +52,7 @@ class IsingSimulation():
         self.compute_energy()
 
     def precompute_neighborlist(self):
+        # row, col index for each site into 4 i,j pairs of neighbors
         nl = np.empty(
             shape=(self.Nx, self.Ny, 4, 2),
             dtype=np.int32
@@ -142,3 +143,18 @@ class IsingSimulation():
         self.sweeps += sweeps
         self.compute_energy()
         self.sweeps_per_second = sweeps / (time.time() - tstart)
+
+
+if __name__ == '__main__':
+    """
+    Crude benchmark test
+    """
+    Nx = 40
+    Ny = 40
+    isim = IsingSimulation(Nx, Ny)
+    isim.monte_carlo_sweep(5)
+    tstart = time.time_ns()
+    sweeps = 100
+    isim.monte_carlo_sweep(sweeps)
+    tend = time.time_ns()
+    print(f"{Nx=}, {Ny=}, {sweeps=}, time={(tend-tstart)/1000000}ms")
