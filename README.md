@@ -7,6 +7,6 @@ A [demo](https://share.streamlit.io/newmanrs/streamlit-ising-model/main) of this
 ![](images/streamlit_ising_example.png)
 
 ## Installation
-Install via provided Makefile.
+Install via provided [Makefile](Makefile).
 
 For more details, consult the documentation for [streamlit](https://docs.streamlit.io/en/stable/).
