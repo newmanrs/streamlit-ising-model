@@ -16,7 +16,7 @@ class IsingSimulation():
     neighborlist = None  # precompute neighbors
     accepted_count = None
     rejected_count = None
-    rng = np.random.default_rng()
+    rng = np.random.Generator(np.random.PCG64())
 
     def __init__(self, Nx, Ny):
         self.reinitialize(Nx, Ny)
