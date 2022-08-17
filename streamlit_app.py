@@ -68,13 +68,13 @@ def render_streamlit():
         "Nx (Sites on X axis)",
         min_value=3,
         value=20,
-        max_value=400)
+        max_value=50)
 
     u_Ny = st.sidebar.number_input(
         "Ny (Sites on Y axis)",
         min_value=3,
         value=20,
-        max_value=400)
+        max_value=50)
 
     u_T = st.sidebar.number_input(
         "T (Temperature)",
