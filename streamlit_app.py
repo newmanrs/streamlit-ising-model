@@ -149,4 +149,9 @@ def render_streamlit():
 
 if __name__ == '__main__':
 
+    st.set_page_config(
+        page_title='Ising Model',
+        page_icon='favicon.ico'
+        )
+
     render_streamlit()
