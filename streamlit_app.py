@@ -58,9 +58,17 @@ def render_streamlit():
     chartholder = st.empty()
 
     # Text after chart
-    st.write(r'''
+    st.write(
+        r'''
         Each Monte Carlo (MC) sweep is $N_x N_y$ random Monte Carlo moves applied to the simulation board.  Moves are accepted with probability $\exp(-E/kT)$ where units are set such that Boltzmann's constant $k=1$.  Adjust sweeps per frame or add sleep time between loop iterations if the simulation is outpacing streamlit's ability to redraw the Ising model.  Critical point for the ordered-disordered phase transition is near the default temperature of 2.27.
     ''') # noqa : E501
+
+    st.write(
+        """
+        Source code for this app is
+        [available on my github](https://github.com/newmanrs/streamlit-ising-model).
+        """  # noqa : E501
+        )
 
     # Streamlit sidebar vars can be updated at any time by user.
     # u_ prefix for these.
